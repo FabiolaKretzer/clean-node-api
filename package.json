@@ -1,22 +1,35 @@
 {
-  "name": "clean-node-api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FabiolaKretzer/clean-node-api.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/FabiolaKretzer/clean-node-api/issues"
-  },
-  "homepage": "https://github.com/FabiolaKretzer/clean-node-api#readme",
-  "devDependencies": {
-    "standard": "^14.3.4"
-  }
+    "name": "clean-node-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "lint-staged": {
+        "*.js": [
+            "standard --fix",
+            "git add"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FabiolaKretzer/clean-node-api.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/FabiolaKretzer/clean-node-api/issues"
+    },
+    "homepage": "https://github.com/FabiolaKretzer/clean-node-api#readme",
+    "devDependencies": {
+        "husky": "^4.2.5",
+        "lint-staged": "^10.2.11",
+        "standard": "^14.3.4"
+    }
 }

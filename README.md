@@ -14,3 +14,8 @@ Permite adicionar hooks no git, assim dá pra rodar um script antes que aconteç
 ```
 npm i husky -D
 ```
+
+Para testes
+```
+npm i jest -D
+```

@@ -19,3 +19,8 @@ Para testes
 ```
 npm i jest -D
 ```
+
+Para validação do email
+```
+npm i validator
+```

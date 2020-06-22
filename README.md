@@ -24,3 +24,7 @@ Para validação do email
 ```
 npm i validator
 ```
+
+```
+npm i bcrypt
+```

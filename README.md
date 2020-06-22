@@ -25,6 +25,7 @@ Para validação do email
 npm i validator
 ```
 
+Para validação da senha
 ```
 npm i bcrypt
 ```

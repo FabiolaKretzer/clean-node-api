@@ -34,3 +34,13 @@ Geração do token
 ```
 npm i jsonwebtoken
 ```
+
+Para o banco de dados
+```
+npm i mongodb
+```
+
+Biblioteca para mokcar o mongodb em memória
+```
+npm i @shelf/jest-mongodb -D
+```

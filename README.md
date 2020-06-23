@@ -29,3 +29,8 @@ Para validação da senha
 ```
 npm i bcrypt
 ```
+
+Geração do token
+```
+npm i jsonwebtoken
+```

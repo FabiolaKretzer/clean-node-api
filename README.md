@@ -49,3 +49,8 @@ Instalação do express
 ```
 npm i express
 ```
+
+Permite emular uma requisição
+```
+npm i supertest -D
+```

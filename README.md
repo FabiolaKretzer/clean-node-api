@@ -44,3 +44,8 @@ Biblioteca para mokcar o mongodb em memória
 ```
 npm i @shelf/jest-mongodb -D
 ```
+
+Instalação do express
+```
+npm i express
+```

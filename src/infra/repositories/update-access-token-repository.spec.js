@@ -1,6 +1,6 @@
 const MongoHelper = require('../helpers/mongo-helper')
+const MissingParamError = require('../../utils/errors/missing-param-error')
 const UpdateAccessTokenRepository = require('./update-access-token-repository')
-const { MissingParamError } = require('../../utils/errors')
 let db
 
 const makeSut = () => {
@@ -12,7 +12,7 @@ const makeSut = () => {
   }
 }
 
-describe('UpdateAccesTokenRepository', () => {
+describe('UpdateAccessToken Repository', () => {
   let fakeUserId
 
   beforeAll(async () => {

@@ -33,8 +33,9 @@ describe('UpdateAccessToken Repository', () => {
     fakeUserId = fakeUser.ops[0]._id
   })
 
-  afterAll(async () => {
-    await MongoHelper.disconnect()
+  afterAll(done => {
+    MongoHelper.disconnect()
+    done()
   })
 
   test('Should update the user with the given accessToken', async () => {

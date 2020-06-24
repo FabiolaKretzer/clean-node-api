@@ -1,4 +1,5 @@
 const { MissingParamError } = require('../../utils/errors')
+
 module.exports = class LoadUserByEmailRepository {
   constructor (userModel) {
     this.userModel = userModel

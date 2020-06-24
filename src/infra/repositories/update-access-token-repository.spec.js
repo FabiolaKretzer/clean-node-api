@@ -33,8 +33,8 @@ describe('UpdateAccessToken Repository', () => {
     fakeUserId = fakeUser.ops[0]._id
   })
 
-  afterAll(done => {
-    MongoHelper.disconnect()
+  afterAll(async (done) => {
+    await MongoHelper.disconnect()
     done()
   })
 

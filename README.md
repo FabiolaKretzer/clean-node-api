@@ -54,3 +54,8 @@ Permite emular uma requisição
 ```
 npm i supertest -D
 ```
+
+Permite organizar as rotas
+```
+npm i fast-glob
+```

@@ -19,7 +19,7 @@ module.exports = router => {
   //   encrypter,
   //   tokenGenerator
   // })
-  // const loginRouter = new LoginRouter({ 
+  // const loginRouter = new LoginRouter({
   //   authUseCase,
   //   emailValidator
   // })

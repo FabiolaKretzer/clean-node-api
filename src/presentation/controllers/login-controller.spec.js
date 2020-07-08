@@ -1,16 +1,16 @@
-const LoginRouter = require('./login-router')
+const makeLoginController = require('./login-controller')
 const { MissingParamError, InvalidParamError } = require('../../utils/errors')
 const { ServerError, UnauthorizedError } = require('../errors')
 
 const makeSut = () => {
   const authUseCaseSpy = makeAuthUseCase()
   const emailValidatorSpy = makeEmailValidator()
-  const sut = new LoginRouter({
+  const handle = makeLoginController({
     authUseCase: authUseCaseSpy,
     emailValidator: emailValidatorSpy
   })
   return {
-    sut,
+    handle,
     authUseCaseSpy,
     emailValidatorSpy
   }
@@ -61,58 +61,58 @@ const makeAuthUseCaseWithError = () => {
 
 describe('Login Router', () => {
   test('Should return 400 if no email is provided', async () => {
-    const { sut } = makeSut()
+    const { handle } = makeSut()
     const httpRequest = {
       body: {
         password: 'any_password'
       }
     }
-    const httpResponse = await sut.route(httpRequest)
+    const httpResponse = await handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body.error).toBe(new MissingParamError('email').message)
   })
 
   test('Should return 400 if no password is provided', async () => {
-    const { sut } = makeSut()
+    const { handle } = makeSut()
     const httpRequest = {
       body: {
         email: 'any_email@mail.com'
       }
     }
-    const httpResponse = await sut.route(httpRequest)
+    const httpResponse = await handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body.error).toBe(new MissingParamError('password').message)
   })
 
   test('Should return 500 if no httpRequest is provided', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.route()
+    const { handle } = makeSut()
+    const httpResponse = await handle()
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body.error).toBe(new ServerError().message)
   })
 
   test('Should return 500 if httpRequest has no body', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.route({})
+    const { handle } = makeSut()
+    const httpResponse = await handle({})
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body.error).toEqual(new ServerError().message)
   })
 
   test('Should call AuthUseCase with correct params', async () => {
-    const { sut, authUseCaseSpy } = makeSut()
+    const { handle, authUseCaseSpy } = makeSut()
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password'
       }
     }
-    await sut.route(httpRequest)
+    await handle(httpRequest)
     expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
     expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
   })
 
   test('Should return 401 when invalid credentials are provided', async () => {
-    const { sut, authUseCaseSpy } = makeSut()
+    const { handle, authUseCaseSpy } = makeSut()
     authUseCaseSpy.accessToken = null
     const httpRequest = {
       body: {
@@ -120,26 +120,26 @@ describe('Login Router', () => {
         password: 'invalid_password'
       }
     }
-    const httpResponse = await sut.route(httpRequest)
+    const httpResponse = await handle(httpRequest)
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body.error).toEqual(new UnauthorizedError().message)
   })
 
   test('Should return 200 when valid credentials are provided', async () => {
-    const { sut, authUseCaseSpy } = makeSut()
+    const { handle, authUseCaseSpy } = makeSut()
     const httpRequest = {
       body: {
         email: 'valid_email@mail.com',
         password: 'valid_password'
       }
     }
-    const httpResponse = await sut.route(httpRequest)
+    const httpResponse = await handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.accessToken).toBe(authUseCaseSpy.accessToken)
   })
 
   test('Should return 400 if an invalid email is provided', async () => {
-    const { sut, emailValidatorSpy } = makeSut()
+    const { handle, emailValidatorSpy } = makeSut()
     emailValidatorSpy.isEmailValid = false
     const httpRequest = {
       body: {
@@ -147,48 +147,48 @@ describe('Login Router', () => {
         password: 'any_password'
       }
     }
-    const httpResponse = await sut.route(httpRequest)
+    const httpResponse = await handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body.error).toEqual(new InvalidParamError('email').message)
   })
 
   test('Should call EmailValidator with correct email', async () => {
-    const { sut, emailValidatorSpy } = makeSut()
+    const { handle, emailValidatorSpy } = makeSut()
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password'
       }
     }
-    await sut.route(httpRequest)
+    await handle(httpRequest)
     expect(emailValidatorSpy.email).toBe(httpRequest.body.email)
   })
 
   test('Should throw if invalid dependencies are provided', async () => {
     const invalid = {}
     const authUseCase = makeAuthUseCase()
-    const suts = [].concat(
-      new LoginRouter(),
-      new LoginRouter({}),
-      new LoginRouter({
+    const list = [].concat(
+      makeLoginController(),
+      makeLoginController({}),
+      makeLoginController({
         authUseCase: invalid
       }),
-      new LoginRouter({
+      makeLoginController({
         authUseCase
       }),
-      new LoginRouter({
+      makeLoginController({
         authUseCase,
         emailValidator: invalid
       })
     )
-    for (const sut of suts) {
+    for (const handle of list) {
       const httpRequest = {
         body: {
           email: 'any_email@mail.com',
           password: 'any_password'
         }
       }
-      const httpResponse = await sut.route(httpRequest)
+      const httpResponse = await handle(httpRequest)
       expect(httpResponse.statusCode).toBe(500)
       expect(httpResponse.body.error).toEqual(new ServerError().message)
     }
@@ -196,23 +196,23 @@ describe('Login Router', () => {
 
   test('Should throw if any dependency throws', async () => {
     const authUseCase = makeAuthUseCase()
-    const suts = [].concat(
-      new LoginRouter({
+    const list = [].concat(
+      makeLoginController({
         authUseCase: makeAuthUseCaseWithError()
       }),
-      new LoginRouter({
+      makeLoginController({
         authUseCase,
         emailValidator: makeEmailValidatorWithError()
       })
     )
-    for (const sut of suts) {
+    for (const handle of list) {
       const httpRequest = {
         body: {
           email: 'any_email@mail.com',
           password: 'any_password'
         }
       }
-      const httpResponse = await sut.route(httpRequest)
+      const httpResponse = await handle(httpRequest)
       expect(httpResponse.statusCode).toBe(500)
       expect(httpResponse.body.error).toEqual(new ServerError().message)
     }
